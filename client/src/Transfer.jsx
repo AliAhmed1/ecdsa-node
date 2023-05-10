@@ -1,20 +1,29 @@
 import { useState } from "react";
 import server from "./server";
+import crypto from "./crypto";
+
 
 function Transfer({ address, setBalance }) {
   const [sendAmount, setSendAmount] = useState("");
   const [recipient, setRecipient] = useState("");
+  // const [hashMessage, setHashMessage] = useState("a33321f98e4ff1c283c76998f14f57447545d339b3db534c6d886decb4209f28");
+
 
   const setValue = (setter) => (evt) => setter(evt.target.value);
 
   async function transfer(evt) {
     evt.preventDefault();
-    
+    const hashMessage = "a33321f98e4ff1c283c76998f14f57447545d339b3db534c6d886decb4209f28"
+
+    const signature = crypto.signMessage(hashMessage)
+    console.log(signature)
+   
     try {
       const {
         data: { balance },
       } = await server.post(`send`, {
         sender: address,
+        signature,
         amount: parseInt(sendAmount),
         recipient,
       });
